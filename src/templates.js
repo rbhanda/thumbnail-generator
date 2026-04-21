@@ -1,10 +1,27 @@
 // Template definitions for .NET image generator
 
 export const TEMPLATES = {
-  'email-header': {
-    id: 'email-header',
-    name: '.NET Updates Email Header',
-    description: 'Email banner for .NET monthly updates',
+  'blog-post': {
+    id: 'blog-post',
+    name: 'Blog Post Thumbnail',
+    description: 'Blog post header with title, pill badge, and logos',
+    width: 1920,
+    height: 1080,
+    fields: [
+      { id: 'pill', label: 'Pill / Badge', type: 'text', placeholder: '.NET', defaultValue: '.NET' },
+      { id: 'title', label: 'Title', type: 'text', placeholder: 'Announcing .NET 10 Preview 4', defaultValue: 'Announcing .NET 10 Preview 4' },
+      { id: 'subtitle', label: 'Subtitle (optional)', type: 'text', placeholder: '', defaultValue: '' },
+      { id: 'gradientStart', label: 'Gradient Start', type: 'color', defaultValue: '#512bd4' },
+      { id: 'gradientEnd', label: 'Gradient End', type: 'color', defaultValue: '#7b3ff2' },
+      { id: 'textColor', label: 'Text Color', type: 'color', defaultValue: '#ffffff' },
+      { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: 'dotnet-bot.png' },
+      { id: 'extraImages', label: 'Additional Images', type: 'imageList', defaultValue: [] },
+    ],
+  },
+  'sourcebuild-email': {
+    id: 'sourcebuild-email',
+    name: 'Source Build Email Header',
+    description: 'Email banner for .NET source build updates',
     width: 1920,
     height: 640,
     fields: [

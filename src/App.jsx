@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react'
 import { TEMPLATES, getTemplate, getDefaultValues, getTemplateIds } from './templates'
 import { generateEmailHeaderSvg } from './generators/emailHeader'
 import { generateSocialSvg } from './generators/social'
+import { generateBlogPostSvg } from './generators/blogPost'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -23,25 +24,34 @@ const PLATFORM_MAP = {
   'bluesky': 'Bluesky',
 }
 
-function getSvg(templateId, values) {
+function getSvg(templateId, values, exportWidth, exportHeight) {
   const tmpl = getTemplate(templateId)
   if (!tmpl) return ''
   const resolved = resolveImageValues(values, tmpl.fields)
-  if (templateId === 'email-header') {
-    return generateEmailHeaderSvg(resolved, tmpl.width, tmpl.height)
+  const w = exportWidth || tmpl.width
+  const h = exportHeight || tmpl.height
+  if (templateId === 'blog-post') {
+    return generateBlogPostSvg(resolved, w, h)
   }
-  return generateSocialSvg(resolved, tmpl.width, tmpl.height, PLATFORM_MAP[templateId] || '')
+  if (templateId === 'sourcebuild-email') {
+    return generateEmailHeaderSvg(resolved, w, h)
+  }
+  return generateSocialSvg(resolved, w, h, PLATFORM_MAP[templateId] || '')
 }
 
 function App() {
   const [templateId, setTemplateId] = useState(getTemplateIds()[0])
   const [values, setValues] = useState(() => getDefaultValues(getTemplateIds()[0]))
   const [exportFormat, setExportFormat] = useState('jpg')
+  const [customWidth, setCustomWidth] = useState('')
+  const [customHeight, setCustomHeight] = useState('')
   const [toast, setToast] = useState(null)
   const toastTimer = useRef(null)
 
   const template = getTemplate(templateId)
-  const svgString = getSvg(templateId, values)
+  const exportWidth = parseInt(customWidth, 10) || template?.width || 1920
+  const exportHeight = parseInt(customHeight, 10) || template?.height || 1080
+  const svgString = getSvg(templateId, values, exportWidth, exportHeight)
 
   const showToast = useCallback((message, type = 'success') => {
     setToast({ message, type })
@@ -52,6 +62,8 @@ function App() {
   const handleTemplateChange = useCallback((newId) => {
     setTemplateId(newId)
     setValues(getDefaultValues(newId))
+    setCustomWidth('')
+    setCustomHeight('')
   }, [])
 
   const handleFieldChange = useCallback((fieldId, value) => {
@@ -69,10 +81,9 @@ function App() {
 
   const exportImage = useCallback(async (format) => {
     try {
-      const tmpl = getTemplate(templateId)
       const canvas = document.createElement('canvas')
-      canvas.width = tmpl.width
-      canvas.height = tmpl.height
+      canvas.width = exportWidth
+      canvas.height = exportHeight
       const ctx = canvas.getContext('2d')
 
       const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' })
@@ -85,7 +96,7 @@ function App() {
         img.src = url
       })
 
-      ctx.drawImage(img, 0, 0, tmpl.width, tmpl.height)
+      ctx.drawImage(img, 0, 0, exportWidth, exportHeight)
       URL.revokeObjectURL(url)
 
       const mimeMap = { jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp' }
@@ -94,13 +105,13 @@ function App() {
 
       const a = document.createElement('a')
       a.href = dataUrl
-      a.download = `${tmpl.id}-${values.month || values.title || 'image'}.${format}`
+      a.download = `${templateId}-${values.month || values.title || 'image'}-${exportWidth}x${exportHeight}.${format}`
       a.click()
       showToast(`Exported as ${format.toUpperCase()}`)
     } catch {
       showToast('Export failed', 'error')
     }
-  }, [templateId, svgString, values, showToast])
+  }, [templateId, svgString, values, showToast, exportWidth, exportHeight])
 
   const exportSvg = useCallback(() => {
     const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' })
@@ -276,7 +287,7 @@ function App() {
                 <option key={id} value={id}>{TEMPLATES[id].name}</option>
               ))}
             </select>
-            {template && <small className="helper-text">{template.description} ({template.width}×{template.height})</small>}
+            {template && <small className="helper-text">{template.description}</small>}
           </div>
 
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid var(--color-border)' }} />
@@ -287,6 +298,65 @@ function App() {
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid var(--color-border)' }} />
 
           {/* Export */}
+          <div className="control-group">
+            <label>Export Size (px)</label>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                type="number"
+                placeholder={String(template?.width || 1920)}
+                value={customWidth}
+                onChange={(e) => setCustomWidth(e.target.value)}
+                style={{ width: '90px' }}
+                min="100"
+                max="7680"
+              />
+              <span style={{ color: 'var(--color-text-muted)' }}>×</span>
+              <input
+                type="number"
+                placeholder={String(template?.height || 1080)}
+                value={customHeight}
+                onChange={(e) => setCustomHeight(e.target.value)}
+                style={{ width: '90px' }}
+                min="100"
+                max="4320"
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginTop: '6px' }}>
+              {[
+                { label: '1920×1080', w: 1920, h: 1080 },
+                { label: '1200×630', w: 1200, h: 630 },
+                { label: '1280×720', w: 1280, h: 720 },
+                { label: '800×418', w: 800, h: 418 },
+                { label: '600×315', w: 600, h: 315 },
+              ].map(p => (
+                <button
+                  key={p.label}
+                  type="button"
+                  style={{
+                    padding: '2px 8px', fontSize: '0.75rem',
+                    background: (exportWidth === p.w && exportHeight === p.h) ? 'var(--color-primary)' : 'var(--color-border)',
+                    color: 'var(--color-text)', border: 'none', borderRadius: '4px', cursor: 'pointer',
+                  }}
+                  onClick={() => { setCustomWidth(String(p.w)); setCustomHeight(String(p.h)) }}
+                >
+                  {p.label}
+                </button>
+              ))}
+              <button
+                type="button"
+                style={{
+                  padding: '2px 8px', fontSize: '0.75rem',
+                  background: (!customWidth && !customHeight) ? 'var(--color-primary)' : 'var(--color-border)',
+                  color: 'var(--color-text)', border: 'none', borderRadius: '4px', cursor: 'pointer',
+                }}
+                onClick={() => { setCustomWidth(''); setCustomHeight('') }}
+              >
+                Default
+              </button>
+            </div>
+            <small className="helper-text">Current: {exportWidth}×{exportHeight}</small>
+          </div>
+
           <div className="control-group">
             <label htmlFor="format-select">Export Format</label>
             <select
