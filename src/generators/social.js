@@ -16,14 +16,9 @@ export function generateSocialSvg(values, width = 1200, height = 675, platform =
   const centerX = width / 2
   const centerY = height / 2
 
-  const logoSection = logoImage ? `
-    <image href="${logoImage}" x="${centerX - 50}" y="${centerY - 140}" width="100" height="100" preserveAspectRatio="xMidYMid meet" />
-  ` : `
-    <!-- .NET logo placeholder -->
-    <g transform="translate(${centerX - 40}, ${centerY - 130})">
-      <circle cx="10" cy="55" r="8" fill="${textColor}" opacity="0.9" />
-      <text x="28" y="68" font-family="'Segoe UI', sans-serif" font-size="40" fill="${textColor}" font-weight="700">NET</text>
-    </g>
+  const logoSrc = logoImage || 'dotnet-bot.png'
+  const logoSection = `
+    <image href="${logoSrc}" x="${centerX - 50}" y="${centerY - 140}" width="100" height="100" preserveAspectRatio="xMidYMid meet" />
   `
 
   // Platform badge (subtle, bottom-right)

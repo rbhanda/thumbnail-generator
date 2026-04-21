@@ -3,6 +3,19 @@ import { TEMPLATES, getTemplate, getDefaultValues, getTemplateIds } from './temp
 import { generateEmailHeaderSvg } from './generators/emailHeader'
 import { generateSocialSvg } from './generators/social'
 
+const BASE = import.meta.env.BASE_URL
+
+// Resolve default image filenames (like "dotnet-bot.png") to full URLs
+function resolveImageValues(values, fields) {
+  const resolved = { ...values }
+  for (const field of fields) {
+    if (field.type === 'image' && resolved[field.id] && !resolved[field.id].startsWith('data:') && !resolved[field.id].startsWith('http') && !resolved[field.id].startsWith('/')) {
+      resolved[field.id] = `${BASE}${resolved[field.id]}`
+    }
+  }
+  return resolved
+}
+
 const PLATFORM_MAP = {
   'twitter': 'Twitter / X',
   'facebook': 'Facebook',
@@ -13,10 +26,11 @@ const PLATFORM_MAP = {
 function getSvg(templateId, values) {
   const tmpl = getTemplate(templateId)
   if (!tmpl) return ''
+  const resolved = resolveImageValues(values, tmpl.fields)
   if (templateId === 'email-header') {
-    return generateEmailHeaderSvg(values, tmpl.width, tmpl.height)
+    return generateEmailHeaderSvg(resolved, tmpl.width, tmpl.height)
   }
-  return generateSocialSvg(values, tmpl.width, tmpl.height, PLATFORM_MAP[templateId] || '')
+  return generateSocialSvg(resolved, tmpl.width, tmpl.height, PLATFORM_MAP[templateId] || '')
 }
 
 function App() {
@@ -142,6 +156,10 @@ function App() {
     }
 
     if (field.type === 'image') {
+      const previewSrc = value && (value.startsWith('data:') || value.startsWith('http') || value.startsWith('/'))
+        ? value
+        : value ? `${BASE}${value}` : null
+      const isCustomUpload = value && value.startsWith('data:')
       return (
         <div key={field.id} className="control-group">
           <label>{field.label}</label>
@@ -155,15 +173,15 @@ function App() {
               accept="image/*"
               onChange={(e) => handleImageUpload(field.id, e.target.files[0])}
             />
-            {value && <img src={value} alt="Preview" className="image-preview" />}
-            {value && (
+            {previewSrc && <img src={previewSrc} alt="Preview" className="image-preview" />}
+            {isCustomUpload && (
               <button
                 type="button"
                 className="btn btn-secondary"
                 style={{ marginTop: '4px', padding: '4px 10px', fontSize: '0.8rem' }}
-                onClick={() => handleFieldChange(field.id, null)}
+                onClick={() => handleFieldChange(field.id, field.defaultValue || null)}
               >
-                Remove
+                Reset to default
               </button>
             )}
           </div>

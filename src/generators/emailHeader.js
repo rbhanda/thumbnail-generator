@@ -17,23 +17,11 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
   const displayText = `${title} ${subtitle}`
   const dateText = `${month} ${year}`
 
-  // dotnet-bot SVG inline (simplified)
+  // dotnet-bot image
+  const botSrc = botImage || 'dotnet-bot.png'
   const botSection = showBot === 'yes' ? `
     <g transform="translate(${width - 320}, ${height / 2 - 180})">
-      ${botImage
-        ? `<image href="${botImage}" x="0" y="0" width="280" height="360" preserveAspectRatio="xMidYMid meet" />`
-        : `
-        <!-- Default dotnet-bot placeholder -->
-        <rect x="80" y="40" width="120" height="140" rx="60" fill="rgba(255,255,255,0.15)" />
-        <circle cx="120" cy="90" r="12" fill="${textColor}" opacity="0.8" />
-        <circle cx="160" cy="90" r="12" fill="${textColor}" opacity="0.8" />
-        <rect x="90" y="180" width="100" height="120" rx="10" fill="rgba(255,255,255,0.15)" />
-        <rect x="70" y="200" width="30" height="80" rx="8" fill="rgba(255,255,255,0.12)" />
-        <rect x="180" y="200" width="30" height="80" rx="8" fill="rgba(255,255,255,0.12)" />
-        <rect x="100" y="300" width="35" height="60" rx="6" fill="rgba(255,255,255,0.12)" />
-        <rect x="145" y="300" width="35" height="60" rx="6" fill="rgba(255,255,255,0.12)" />
-        `
-      }
+      <image href="${botSrc}" x="0" y="0" width="280" height="360" preserveAspectRatio="xMidYMid meet" />
     </g>
   ` : ''
 

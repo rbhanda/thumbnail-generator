@@ -19,7 +19,7 @@ export const TEMPLATES = {
         { value: 'yes', label: 'Yes' },
         { value: 'no', label: 'No' },
       ], defaultValue: 'yes' },
-      { id: 'botImage', label: 'Bot / Mascot Image', type: 'image', defaultValue: null },
+      { id: 'botImage', label: 'Bot / Mascot Image', type: 'image', defaultValue: 'dotnet-bot.png' },
     ],
   },
   'twitter': {
@@ -34,7 +34,7 @@ export const TEMPLATES = {
       { id: 'gradientStart', label: 'Gradient Start', type: 'color', defaultValue: '#512bd4' },
       { id: 'gradientEnd', label: 'Gradient End', type: 'color', defaultValue: '#7b3ff2' },
       { id: 'textColor', label: 'Text Color', type: 'color', defaultValue: '#ffffff' },
-      { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: null },
+      { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: 'dotnet-bot.png' },
     ],
   },
   'facebook': {
@@ -49,7 +49,7 @@ export const TEMPLATES = {
       { id: 'gradientStart', label: 'Gradient Start', type: 'color', defaultValue: '#512bd4' },
       { id: 'gradientEnd', label: 'Gradient End', type: 'color', defaultValue: '#7b3ff2' },
       { id: 'textColor', label: 'Text Color', type: 'color', defaultValue: '#ffffff' },
-      { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: null },
+      { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: 'dotnet-bot.png' },
     ],
   },
   'youtube': {
@@ -64,7 +64,7 @@ export const TEMPLATES = {
       { id: 'gradientStart', label: 'Gradient Start', type: 'color', defaultValue: '#512bd4' },
       { id: 'gradientEnd', label: 'Gradient End', type: 'color', defaultValue: '#7b3ff2' },
       { id: 'textColor', label: 'Text Color', type: 'color', defaultValue: '#ffffff' },
-      { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: null },
+      { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: 'dotnet-bot.png' },
     ],
   },
   'bluesky': {
@@ -79,7 +79,7 @@ export const TEMPLATES = {
       { id: 'gradientStart', label: 'Gradient Start', type: 'color', defaultValue: '#512bd4' },
       { id: 'gradientEnd', label: 'Gradient End', type: 'color', defaultValue: '#7b3ff2' },
       { id: 'textColor', label: 'Text Color', type: 'color', defaultValue: '#ffffff' },
-      { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: null },
+      { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: 'dotnet-bot.png' },
     ],
   },
 }
