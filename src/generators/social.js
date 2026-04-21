@@ -58,14 +58,19 @@ export function generateSocialSvg(values, width = 1200, height = 675, platform =
   ${logoSection}
 
   <!-- Title -->
-  <text x="${centerX}" y="${centerY + 30}" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="${titleSize}" font-weight="700" fill="${textColor}" text-anchor="middle" letter-spacing="-1">
+  <text x="${centerX}" y="${centerY + 20}" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="${titleSize}" font-weight="700" fill="${textColor}" text-anchor="middle" letter-spacing="-1">
     ${escapeXml(title)}
   </text>
 
   <!-- Subtitle -->
-  <text x="${centerX}" y="${centerY + 30 + subtitleSize + 12}" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="${subtitleSize}" font-weight="400" fill="${textColor}" text-anchor="middle" opacity="0.85">
+  <text x="${centerX}" y="${centerY + 20 + subtitleSize + 10}" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="${Math.round(subtitleSize * 0.65)}" font-weight="400" fill="${textColor}" text-anchor="middle" opacity="0.75">
     ${escapeXml(subtitle)}
   </text>
+
+  <!-- Extra images -->
+  ${(values.extraImages || []).map((img, i) => 
+    `<image href="${img}" x="${width - 160 - i * 120}" y="${height - 120}" width="100" height="100" preserveAspectRatio="xMidYMid meet" />`
+  ).join('\n  ')}
 
   <!-- Bottom .NET mark -->
   <g transform="translate(40, ${height - 50})" opacity="0.4">

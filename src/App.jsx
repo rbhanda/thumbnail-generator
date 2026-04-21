@@ -189,6 +189,57 @@ function App() {
       )
     }
 
+    if (field.type === 'imageList') {
+      const images = value || []
+      return (
+        <div key={field.id} className="control-group">
+          <label>{field.label}</label>
+          <div className="image-upload-group">
+            <label className="upload-btn" htmlFor={`file-${field.id}`}>
+              Add Image
+            </label>
+            <input
+              type="file"
+              id={`file-${field.id}`}
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files[0]
+                if (!file) return
+                const reader = new FileReader()
+                reader.onload = (ev) => {
+                  handleFieldChange(field.id, [...images, ev.target.result])
+                }
+                reader.readAsDataURL(file)
+                e.target.value = ''
+              }}
+            />
+            {images.length > 0 && (
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '8px' }}>
+                {images.map((img, i) => (
+                  <div key={i} style={{ position: 'relative' }}>
+                    <img src={img} alt={`Extra ${i + 1}`} className="image-preview" />
+                    <button
+                      type="button"
+                      style={{
+                        position: 'absolute', top: '-6px', right: '-6px',
+                        background: '#d32f2f', color: '#fff', border: 'none',
+                        borderRadius: '50%', width: '20px', height: '20px',
+                        fontSize: '12px', cursor: 'pointer', lineHeight: '1',
+                      }}
+                      onClick={() => handleFieldChange(field.id, images.filter((_, idx) => idx !== i))}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <small className="helper-text">Add logos, icons, or other images to the thumbnail</small>
+          </div>
+        </div>
+      )
+    }
+
     // Default: text
     return (
       <div key={field.id} className="control-group">

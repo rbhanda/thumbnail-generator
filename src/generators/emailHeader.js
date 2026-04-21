@@ -14,7 +14,6 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
     botImage = null,
   } = values
 
-  const displayText = `${title} ${subtitle}`
   const dateText = `${month} ${year}`
 
   // dotnet-bot image
@@ -56,12 +55,17 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
   </g>
 
   <!-- Title -->
-  <text x="120" y="${height / 2 - 40}" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="120" font-weight="700" fill="${textColor}" letter-spacing="-2">
-    ${escapeXml(displayText)}
+  <text x="120" y="${height / 2 - 60}" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="120" font-weight="700" fill="${textColor}" letter-spacing="-2">
+    ${escapeXml(title)}
+  </text>
+
+  <!-- Subtitle -->
+  <text x="120" y="${height / 2 + 20}" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="52" font-weight="400" fill="${textColor}" opacity="0.9">
+    ${escapeXml(subtitle)}
   </text>
 
   <!-- Date -->
-  <text x="120" y="${height / 2 + 60}" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="56" font-weight="400" fill="${textColor}" opacity="0.85">
+  <text x="120" y="${height / 2 + 80}" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="36" font-weight="300" fill="${textColor}" opacity="0.7">
     ${escapeXml(dateText)}
   </text>
 
@@ -70,6 +74,11 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
     <circle cx="12" cy="-12" r="6" fill="${textColor}" />
     <text x="26" y="0" font-family="'Segoe UI', sans-serif" font-size="24" fill="${textColor}" font-weight="600">NET</text>
   </g>
+
+  <!-- Extra images -->
+  ${(values.extraImages || []).map((img, i) =>
+    `<image href="${img}" x="${400 + i * 130}" y="${height - 140}" width="110" height="110" preserveAspectRatio="xMidYMid meet" />`
+  ).join('\n  ')}
 
   ${botSection}
 </svg>`

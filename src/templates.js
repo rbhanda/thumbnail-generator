@@ -20,6 +20,7 @@ export const TEMPLATES = {
         { value: 'no', label: 'No' },
       ], defaultValue: 'yes' },
       { id: 'botImage', label: 'Bot / Mascot Image', type: 'image', defaultValue: 'dotnet-bot.png' },
+      { id: 'extraImages', label: 'Additional Images', type: 'imageList', defaultValue: [] },
     ],
   },
   'twitter': {
@@ -35,6 +36,7 @@ export const TEMPLATES = {
       { id: 'gradientEnd', label: 'Gradient End', type: 'color', defaultValue: '#7b3ff2' },
       { id: 'textColor', label: 'Text Color', type: 'color', defaultValue: '#ffffff' },
       { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: 'dotnet-bot.png' },
+      { id: 'extraImages', label: 'Additional Images', type: 'imageList', defaultValue: [] },
     ],
   },
   'facebook': {
@@ -50,6 +52,7 @@ export const TEMPLATES = {
       { id: 'gradientEnd', label: 'Gradient End', type: 'color', defaultValue: '#7b3ff2' },
       { id: 'textColor', label: 'Text Color', type: 'color', defaultValue: '#ffffff' },
       { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: 'dotnet-bot.png' },
+      { id: 'extraImages', label: 'Additional Images', type: 'imageList', defaultValue: [] },
     ],
   },
   'youtube': {
@@ -65,6 +68,7 @@ export const TEMPLATES = {
       { id: 'gradientEnd', label: 'Gradient End', type: 'color', defaultValue: '#7b3ff2' },
       { id: 'textColor', label: 'Text Color', type: 'color', defaultValue: '#ffffff' },
       { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: 'dotnet-bot.png' },
+      { id: 'extraImages', label: 'Additional Images', type: 'imageList', defaultValue: [] },
     ],
   },
   'bluesky': {
@@ -80,6 +84,7 @@ export const TEMPLATES = {
       { id: 'gradientEnd', label: 'Gradient End', type: 'color', defaultValue: '#7b3ff2' },
       { id: 'textColor', label: 'Text Color', type: 'color', defaultValue: '#ffffff' },
       { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: 'dotnet-bot.png' },
+      { id: 'extraImages', label: 'Additional Images', type: 'imageList', defaultValue: [] },
     ],
   },
 }
