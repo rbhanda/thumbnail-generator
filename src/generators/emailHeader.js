@@ -69,12 +69,6 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
     ${escapeXml(dateText)}
   </text>
 
-  <!-- .NET logo mark -->
-  <g transform="translate(120, ${height - 80})" opacity="0.5">
-    <circle cx="12" cy="-12" r="6" fill="${textColor}" />
-    <text x="26" y="0" font-family="'Segoe UI', sans-serif" font-size="24" fill="${textColor}" font-weight="600">NET</text>
-  </g>
-
   <!-- Extra images -->
   ${(values.extraImages || []).map((img, i) =>
     `<image href="${img}" x="${400 + i * 130}" y="${height - 140}" width="110" height="110" preserveAspectRatio="xMidYMid meet" />`

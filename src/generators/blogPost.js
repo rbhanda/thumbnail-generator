@@ -13,44 +13,61 @@ export function generateBlogPostSvg(values, width = 1920, height = 1080) {
     extraImages = [],
   } = values
 
-  const titleSize = Math.round(width * 0.042)
-  const subtitleSize = Math.round(titleSize * 0.5)
-  const pillSize = Math.round(titleSize * 0.35)
+  const scale = width / 1920
+  const edgeX = Math.round(75 * scale)
+  const titleSize = Math.round(133 * scale)
+  const subtitleSize = Math.round(75 * scale)
+  const pillSize = Math.round(88 * scale)
+  const pillHeight = Math.round(126 * scale)
 
   // Pill badge
-  const pillWidth = pill.length * pillSize * 0.65 + 40
+  const pillPadX = Math.round(44 * scale)
+  const pillWidth = pill ? pill.length * pillSize * 0.6 + pillPadX * 2 : 0
   const pillSection = pill ? `
-    <rect x="100" y="100" width="${pillWidth}" height="${pillSize + 24}" rx="${(pillSize + 24) / 2}" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="1" />
-    <text x="${100 + pillWidth / 2}" y="${100 + pillSize + 4}" font-family="'Segoe UI', sans-serif" font-size="${pillSize}" font-weight="600" fill="${textColor}" text-anchor="middle">
+    <rect x="${edgeX}" y="${Math.round(132 * scale)}" width="${pillWidth}" height="${pillHeight}" rx="${pillHeight / 2}" fill="rgba(141,200,232,0.9)" />
+    <text x="${edgeX + pillWidth / 2}" y="${Math.round(132 * scale) + pillHeight / 2 + pillSize * 0.35}" font-family="'Segoe UI', sans-serif" font-size="${pillSize}" font-weight="600" fill="#000000" text-anchor="middle">
       ${escapeXml(pill)}
     </text>
   ` : ''
 
-  // Title - wrap long text (rough wrapping at ~30 chars per line)
-  const maxCharsPerLine = Math.floor(width * 0.55 / (titleSize * 0.55))
+  // Title - constrain to left side when logos present
+  const hasLogos = [logoImage, ...extraImages].filter(Boolean).length > 0
+  const textMaxWidth = hasLogos ? width / 2 : width - edgeX * 2
+  const maxCharsPerLine = Math.floor(textMaxWidth / (titleSize * 0.55))
   const titleLines = wrapText(title, maxCharsPerLine)
-  const titleStartY = pill ? 200 : 140
+  const titleStartY = Math.round(444 * scale)
+  const titleLineHeight = titleSize * 1.1
   const titleSection = titleLines.map((line, i) =>
-    `<text x="100" y="${titleStartY + i * (titleSize + 10)}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${titleSize}" font-weight="700" fill="${textColor}" letter-spacing="-1">${escapeXml(line)}</text>`
+    `<text x="${edgeX}" y="${titleStartY + i * titleLineHeight}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${titleSize}" font-weight="700" fill="${textColor}" letter-spacing="-1">${escapeXml(line)}</text>`
   ).join('\n  ')
 
   // Subtitle at bottom
+  const edgeY = Math.round(132 * scale)
   const subtitleSection = subtitle ? `
-    <text x="100" y="${height - 80}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${subtitleSize}" font-weight="400" fill="${textColor}" opacity="0.75">
+    <text x="${edgeX}" y="${height - edgeY}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${subtitleSize}" font-weight="700" fill="${textColor}">
       ${escapeXml(subtitle)}
     </text>
   ` : ''
 
-  // Logo circles on right side
+  // Logo circles on right side (large, like jongalloway style)
   const allLogos = [logoImage, ...extraImages].filter(Boolean)
-  const logoCircleSize = Math.min(120, Math.round(height * 0.16))
-  const logoStartY = height / 2 - (allLogos.length * (logoCircleSize + 20)) / 2
+  const logoCircleRadius = Math.round(205 * (width / 1920))
+  const logoGap = (allLogos.length === 3 ? 18 : 24) * (width / 1920)
+  const logoBaseX = width - Math.round(376 * (width / 1920))
+  const stackHeight = allLogos.length > 0 ? (allLogos.length * 2 * logoCircleRadius) + ((allLogos.length - 1) * logoGap) : 0
+  const logoTopY = allLogos.length > 1 ? Math.max(55, (height - stackHeight) / 2) + logoCircleRadius : height * 0.48
+  const logoSpacing = (logoCircleRadius * 2) + logoGap
   const logoSection = allLogos.map((logo, i) => {
-    const cy = logoStartY + i * (logoCircleSize + 20) + logoCircleSize / 2
-    const cx = width - 160
+    const cy = allLogos.length > 1 ? logoTopY + i * logoSpacing : logoTopY
+    const cx = logoBaseX
+    const clipRadius = logoCircleRadius * 0.9
+    const logoSize = clipRadius * Math.SQRT2 * 0.98
     return `
-      <circle cx="${cx}" cy="${cy}" r="${logoCircleSize / 2 + 10}" fill="rgba(255,255,255,0.95)" />
-      <image href="${logo}" x="${cx - logoCircleSize / 2}" y="${cy - logoCircleSize / 2}" width="${logoCircleSize}" height="${logoCircleSize}" preserveAspectRatio="xMidYMid meet" clip-path="circle(${logoCircleSize / 2}px at ${logoCircleSize / 2}px ${logoCircleSize / 2}px)" />
+      <g transform="translate(${cx}, ${cy})">
+        <circle cx="0" cy="0" r="${logoCircleRadius}" fill="white" />
+        <clipPath id="logo-clip-${i}"><circle cx="0" cy="0" r="${clipRadius}" /></clipPath>
+        <image href="${logo}" x="${-logoSize / 2}" y="${-logoSize / 2}" width="${logoSize}" height="${logoSize}" clip-path="url(#logo-clip-${i})" preserveAspectRatio="xMidYMid meet" />
+      </g>
     `
   }).join('\n  ')
 
@@ -93,12 +110,6 @@ export function generateBlogPostSvg(values, width = 1920, height = 1080) {
 
   <!-- Logos -->
   ${logoSection}
-
-  <!-- .NET mark -->
-  <g transform="translate(100, ${height - 40})" opacity="0.35">
-    <circle cx="6" cy="-6" r="3.5" fill="${textColor}" />
-    <text x="14" y="0" font-family="'Segoe UI', sans-serif" font-size="14" fill="${textColor}" font-weight="600">NET</text>
-  </g>
 </svg>`
 }
 

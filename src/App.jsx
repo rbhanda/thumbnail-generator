@@ -170,13 +170,12 @@ function App() {
       const previewSrc = value && (value.startsWith('data:') || value.startsWith('http') || value.startsWith('/'))
         ? value
         : value ? `${BASE}${value}` : null
-      const isCustomUpload = value && value.startsWith('data:')
       return (
         <div key={field.id} className="control-group">
           <label>{field.label}</label>
           <div className="image-upload-group">
             <label className="upload-btn" htmlFor={`file-${field.id}`}>
-              Choose File
+              {value ? 'Replace' : 'Choose File'}
             </label>
             <input
               type="file"
@@ -185,15 +184,27 @@ function App() {
               onChange={(e) => handleImageUpload(field.id, e.target.files[0])}
             />
             {previewSrc && <img src={previewSrc} alt="Preview" className="image-preview" />}
-            {isCustomUpload && (
-              <button
-                type="button"
-                className="btn btn-secondary"
-                style={{ marginTop: '4px', padding: '4px 10px', fontSize: '0.8rem' }}
-                onClick={() => handleFieldChange(field.id, field.defaultValue || null)}
-              >
-                Reset to default
-              </button>
+            {value && (
+              <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+                  onClick={() => handleFieldChange(field.id, null)}
+                >
+                  Remove
+                </button>
+                {field.defaultValue && value !== field.defaultValue && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    style={{ padding: '4px 10px', fontSize: '0.8rem' }}
+                    onClick={() => handleFieldChange(field.id, field.defaultValue)}
+                  >
+                    Reset default
+                  </button>
+                )}
+              </div>
             )}
           </div>
         </div>

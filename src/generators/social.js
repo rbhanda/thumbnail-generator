@@ -72,12 +72,6 @@ export function generateSocialSvg(values, width = 1200, height = 675, platform =
     `<image href="${img}" x="${width - 160 - i * 120}" y="${height - 120}" width="100" height="100" preserveAspectRatio="xMidYMid meet" />`
   ).join('\n  ')}
 
-  <!-- Bottom .NET mark -->
-  <g transform="translate(40, ${height - 50})" opacity="0.4">
-    <circle cx="8" cy="-8" r="4" fill="${textColor}" />
-    <text x="18" y="0" font-family="'Segoe UI', sans-serif" font-size="16" fill="${textColor}" font-weight="600">NET</text>
-  </g>
-
   ${platformBadge}
 </svg>`
 }
