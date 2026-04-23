@@ -5,6 +5,24 @@ import { generateBlogPostSvg } from './generators/blogPost'
 
 const BASE = import.meta.env.BASE_URL
 
+// Sanitize a string for use in filenames
+function sanitizeFilename(str) {
+  return String(str).replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 100)
+}
+
+// Validate that an image URL is safe (data: URI or same-origin path)
+function isSafeImageUrl(url) {
+  if (!url) return false
+  if (url.startsWith('data:image/')) return true
+  if (url.startsWith('/') || url.startsWith('./')) return true
+  try {
+    const parsed = new URL(url, window.location.origin)
+    return parsed.origin === window.location.origin
+  } catch {
+    return false
+  }
+}
+
 // Resolve default image filenames (like "dotnet-bot.png") to full URLs
 function resolveImageValues(values, fields) {
   const resolved = { ...values }
@@ -61,12 +79,20 @@ function App() {
 
   const handleImageUpload = useCallback((fieldId, file) => {
     if (!file) return
+    if (!file.type.startsWith('image/')) {
+      showToast('Only image files are allowed', 'error')
+      return
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('Image must be under 10MB', 'error')
+      return
+    }
     const reader = new FileReader()
     reader.onload = (e) => {
       handleFieldChange(fieldId, e.target.result)
     }
     reader.readAsDataURL(file)
-  }, [handleFieldChange])
+  }, [handleFieldChange, showToast])
 
   const exportImage = useCallback(async (format) => {
     try {
@@ -94,7 +120,7 @@ function App() {
 
       const a = document.createElement('a')
       a.href = dataUrl
-      a.download = `${templateId}-${values.month || values.title || 'image'}-${exportWidth}x${exportHeight}.${format}`
+      a.download = `${sanitizeFilename(templateId)}-${sanitizeFilename(values.month || values.title || 'image')}-${exportWidth}x${exportHeight}.${format}`
       a.click()
       showToast(`Exported as ${format.toUpperCase()}`)
     } catch {
@@ -107,7 +133,7 @@ function App() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${templateId}-${values.month || values.title || 'image'}.svg`
+    a.download = `${sanitizeFilename(templateId)}-${sanitizeFilename(values.month || values.title || 'image')}.svg`
     a.click()
     URL.revokeObjectURL(url)
     showToast('Exported as SVG')
@@ -216,6 +242,8 @@ function App() {
               onChange={(e) => {
                 const file = e.target.files[0]
                 if (!file) return
+                if (!file.type.startsWith('image/')) return
+                if (file.size > 10 * 1024 * 1024) return
                 const reader = new FileReader()
                 reader.onload = (ev) => {
                   handleFieldChange(field.id, [...images, ev.target.result])

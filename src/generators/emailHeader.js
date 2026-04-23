@@ -12,6 +12,9 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
     extraImages = [],
   } = values
 
+  // Sanitize image URLs to prevent script injection
+  const safeHref = (url) => url && !url.match(/^\s*javascript:/i) ? url : ''
+
   const scale = width / 1920
   const scaleH = height / 640
   const r = (v) => Math.round(v * scale)
@@ -21,21 +24,10 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
 
   // Variant-dependent colors
   const isDark = variant === 'dark'
-  const bgColor = isDark ? null : (variant === 'light' ? '#f5e6f0' : '#ffffff')
+  const bgColor = variant === 'light' ? '#f5e6f0' : '#ffffff'
   const dateColor = isDark ? '#4d9fff' : '#0066ff'
   const titleColor = isDark ? '#ffffff' : '#512bd4'
   const subtitleColor = isDark ? '#8dc8e8' : '#0066ff'
-
-  // Background
-  const bgSection = isDark
-    ? `<defs>
-    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1a1040" />
-      <stop offset="100%" stop-color="#3b1f8e" />
-    </linearGradient>
-  </defs>
-  <rect width="${width}" height="${height}" fill="url(#bg-grad)" />`
-    : `<rect width="${width}" height="${height}" fill="${bgColor}" />`
 
   // .NET badge
   const badgeW = r(90)
@@ -54,16 +46,16 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
   </text>` : ''
 
   // Extra uploaded images
-  const extraSection = extraImages.map((img, i) =>
+  const extraSection = extraImages.filter(Boolean).map(safeHref).filter(Boolean).map((img, i) =>
     `<image href="${img}" x="${width - r(220) + i * r(120)}" y="${height - rh(200)}" width="${r(100)}" height="${r(100)}" preserveAspectRatio="xMidYMid meet" />`
   ).join('\n  ')
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
-  ${isDark ? '' : '<defs>'}
-  ${bgSection}
-  ${isDark ? '' : '</defs>'}
-
   <defs>
+    ${isDark ? `<linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1040" />
+      <stop offset="100%" stop-color="#3b1f8e" />
+    </linearGradient>` : ''}
     <radialGradient id="magenta-sphere" cx="45%" cy="40%">
       <stop offset="0%" stop-color="#ff6ec7" />
       <stop offset="100%" stop-color="#d500f9" />
@@ -73,6 +65,9 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
       <stop offset="100%" stop-color="#7c4dff" />
     </radialGradient>
   </defs>
+
+  <!-- Background -->
+  <rect width="${width}" height="${height}" fill="${isDark ? 'url(#bg-grad)' : bgColor}" />
 
   <!-- Date text -->
   <text x="${r(80)}" y="${rh(130)}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${r(40)}" font-weight="600" fill="${dateColor}">

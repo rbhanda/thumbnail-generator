@@ -14,6 +14,9 @@ export function generateBlogPostSvg(values, width = 1920, height = 1080) {
     extraImages = [],
   } = values
 
+  // Sanitize image URLs to prevent script injection
+  const safeHref = (url) => url && !url.match(/^\s*javascript:/i) ? url : ''
+
   const scale = width / 1920
   const edgeX = Math.round(75 * scale)
 
@@ -60,7 +63,7 @@ export function generateBlogPostSvg(values, width = 1920, height = 1080) {
   ).join('\n  ') : ''
 
   // Logo in white circle on right side
-  const allLogos = [logoImage, ...extraImages].filter(Boolean)
+  const allLogos = [logoImage, ...extraImages].filter(Boolean).map(safeHref).filter(Boolean)
   const logoCircleRadius = Math.round(140 * scale)
   const logoCenterX = width - Math.round(380 * scale)
   const logoCenterY = Math.round(height * 0.42)
