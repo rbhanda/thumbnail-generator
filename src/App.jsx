@@ -1,7 +1,6 @@
 import { useState, useCallback, useRef } from 'react'
 import { TEMPLATES, getTemplate, getDefaultValues, getTemplateIds } from './templates'
 import { generateEmailHeaderSvg } from './generators/emailHeader'
-import { generateSocialSvg } from './generators/social'
 import { generateBlogPostSvg } from './generators/blogPost'
 
 const BASE = import.meta.env.BASE_URL
@@ -17,13 +16,6 @@ function resolveImageValues(values, fields) {
   return resolved
 }
 
-const PLATFORM_MAP = {
-  'twitter': 'Twitter / X',
-  'facebook': 'Facebook',
-  'youtube': 'YouTube',
-  'bluesky': 'Bluesky',
-}
-
 function getSvg(templateId, values, exportWidth, exportHeight) {
   const tmpl = getTemplate(templateId)
   if (!tmpl) return ''
@@ -33,10 +25,7 @@ function getSvg(templateId, values, exportWidth, exportHeight) {
   if (templateId === 'blog-post') {
     return generateBlogPostSvg(resolved, w, h)
   }
-  if (templateId === 'sourcebuild-email') {
-    return generateEmailHeaderSvg(resolved, w, h)
-  }
-  return generateSocialSvg(resolved, w, h, PLATFORM_MAP[templateId] || '')
+  return generateEmailHeaderSvg(resolved, w, h)
 }
 
 function App() {
