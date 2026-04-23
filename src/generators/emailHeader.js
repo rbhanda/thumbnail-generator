@@ -1,11 +1,14 @@
 // Generates SVG for the .NET Updates Email Header template
-// White background, blue date, purple title, decorative shapes on right
+// 3 variants: dark (navy/purple), light (pink), white
+// Shared decorative shapes on the right side
 
 export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
   const {
     month = 'April',
     year = '2025',
     title = '.NET Updates',
+    subtitle = '',
+    variant = 'dark',
     extraImages = [],
   } = values
 
@@ -16,7 +19,25 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
 
   const dateText = `${month} ${year}`
 
-  // .NET badge (dark blue rounded rect with ".NET" text)
+  // Variant-dependent colors
+  const isDark = variant === 'dark'
+  const bgColor = isDark ? null : (variant === 'light' ? '#f5e6f0' : '#ffffff')
+  const dateColor = isDark ? '#4d9fff' : '#0066ff'
+  const titleColor = isDark ? '#ffffff' : '#512bd4'
+  const subtitleColor = isDark ? '#8dc8e8' : '#0066ff'
+
+  // Background
+  const bgSection = isDark
+    ? `<defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1040" />
+      <stop offset="100%" stop-color="#3b1f8e" />
+    </linearGradient>
+  </defs>
+  <rect width="${width}" height="${height}" fill="url(#bg-grad)" />`
+    : `<rect width="${width}" height="${height}" fill="${bgColor}" />`
+
+  // .NET badge
   const badgeW = r(90)
   const badgeH = r(52)
   const badgeX = width - r(380)
@@ -26,12 +47,22 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
     <text x="${badgeX + badgeW / 2}" y="${badgeY + badgeH / 2 + r(6)}" font-family="'Segoe UI', sans-serif" font-size="${r(18)}" font-weight="700" fill="#ffffff" text-anchor="middle">.NET</text>
   `
 
-  // Extra uploaded images on far right
+  // Subtitle (center-right area, only if provided)
+  const subtitleSection = subtitle ? `
+  <text x="${width * 0.52}" y="${rh(420)}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${r(32)}" font-weight="400" font-style="italic" fill="${subtitleColor}">
+    ${escapeXml(subtitle)}
+  </text>` : ''
+
+  // Extra uploaded images
   const extraSection = extraImages.map((img, i) =>
     `<image href="${img}" x="${width - r(220) + i * r(120)}" y="${height - rh(200)}" width="${r(100)}" height="${r(100)}" preserveAspectRatio="xMidYMid meet" />`
   ).join('\n  ')
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
+  ${isDark ? '' : '<defs>'}
+  ${bgSection}
+  ${isDark ? '' : '</defs>'}
+
   <defs>
     <radialGradient id="magenta-sphere" cx="45%" cy="40%">
       <stop offset="0%" stop-color="#ff6ec7" />
@@ -43,49 +74,49 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
     </radialGradient>
   </defs>
 
-  <!-- White background -->
-  <rect width="${width}" height="${height}" fill="#ffffff" />
-
-  <!-- Date text (blue) -->
-  <text x="${r(80)}" y="${rh(120)}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${r(36)}" font-weight="600" fill="#2563eb">
+  <!-- Date text -->
+  <text x="${r(80)}" y="${rh(130)}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${r(40)}" font-weight="600" fill="${dateColor}">
     ${escapeXml(dateText)}
   </text>
 
-  <!-- Title (purple) -->
-  <text x="${r(80)}" y="${rh(240)}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${r(96)}" font-weight="700" fill="#512bd4" letter-spacing="-1">
+  <!-- Title (italic) -->
+  <text x="${r(80)}" y="${rh(280)}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${r(110)}" font-weight="300" font-style="italic" fill="${titleColor}" letter-spacing="-1">
     ${escapeXml(title)}
   </text>
+
+  <!-- Subtitle -->
+  ${subtitleSection}
 
   <!-- Decorative shapes (right side) -->
 
   <!-- Pink/magenta blob top-right -->
-  <ellipse cx="${width - r(180)}" cy="${rh(60)}" rx="${r(35)}" ry="${r(25)}" fill="#e91e90" opacity="0.7" transform="rotate(-30, ${width - r(180)}, ${rh(60)})" />
+  <ellipse cx="${width - r(180)}" cy="${rh(60)}" rx="${r(35)}" ry="${r(25)}" fill="#e91e90" opacity="0.8" transform="rotate(-30, ${width - r(180)}, ${rh(60)})" />
 
-  <!-- Small pink circle top -->
-  <circle cx="${width - r(320)}" cy="${rh(40)}" r="${r(12)}" fill="#ff80ab" opacity="0.6" />
+  <!-- Small pink capsule -->
+  <rect x="${width - r(300)}" y="${rh(55)}" width="${r(40)}" height="${r(20)}" rx="${r(10)}" fill="#ff80ab" opacity="0.7" transform="rotate(-25, ${width - r(280)}, ${rh(65)})" />
 
   <!-- Purple capsule -->
-  <rect x="${width - r(240)}" y="${rh(100)}" width="${r(60)}" height="${r(30)}" rx="${r(15)}" fill="#9c27b0" opacity="0.7" transform="rotate(-20, ${width - r(210)}, ${rh(115)})" />
+  <rect x="${width - r(220)}" y="${rh(110)}" width="${r(60)}" height="${r(30)}" rx="${r(15)}" fill="#9c27b0" opacity="0.75" transform="rotate(-20, ${width - r(190)}, ${rh(125)})" />
 
-  <!-- Blue checkmark / arrow shape -->
-  <g transform="translate(${width - r(300)}, ${rh(200)}) scale(${scale}) rotate(-5)">
+  <!-- Blue checkmark -->
+  <g transform="translate(${width - r(300)}, ${rh(190)}) scale(${scale * 1.2}) rotate(-5)">
     <path d="M0,30 L25,55 L65,0 L55,0 L25,42 L10,27 Z" fill="#2196f3" opacity="0.9" />
   </g>
 
   <!-- Tilted purple square (outlined) -->
-  <rect x="${width - r(180)}" y="${rh(280)}" width="${r(100)}" height="${r(100)}" rx="${r(10)}" fill="none" stroke="#7c4dff" stroke-width="${r(6)}" opacity="0.5" transform="rotate(15, ${width - r(130)}, ${rh(330)})" />
+  <rect x="${width - r(200)}" y="${rh(290)}" width="${r(120)}" height="${r(120)}" rx="${r(10)}" fill="none" stroke="#7c4dff" stroke-width="${r(6)}" opacity="0.55" transform="rotate(15, ${width - r(140)}, ${rh(350)})" />
 
   <!-- .NET badge -->
   ${badgeSection}
 
   <!-- Large magenta sphere bottom-right -->
-  <circle cx="${width - r(240)}" cy="${height - rh(100)}" r="${r(65)}" fill="url(#magenta-sphere)" opacity="0.9" />
+  <circle cx="${width - r(250)}" cy="${height - rh(90)}" r="${r(65)}" fill="url(#magenta-sphere)" opacity="0.9" />
 
   <!-- Small purple sphere -->
-  <circle cx="${width - r(450)}" cy="${rh(150)}" r="${r(28)}" fill="url(#purple-sphere)" opacity="0.7" />
+  <circle cx="${width - r(430)}" cy="${rh(140)}" r="${r(30)}" fill="url(#purple-sphere)" opacity="0.75" />
 
   <!-- Tiny accent dots -->
-  <circle cx="${width - r(500)}" cy="${rh(70)}" r="${r(6)}" fill="#e91e90" opacity="0.5" />
+  <circle cx="${width - r(490)}" cy="${rh(70)}" r="${r(6)}" fill="#e91e90" opacity="0.5" />
   <circle cx="${width - r(140)}" cy="${rh(200)}" r="${r(8)}" fill="#b388ff" opacity="0.4" />
 
   <!-- Extra images -->

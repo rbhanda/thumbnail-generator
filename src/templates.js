@@ -28,9 +28,15 @@ export const TEMPLATES = {
     width: 1920,
     height: 640,
     fields: [
+      { id: 'variant', label: 'Style', type: 'select', options: [
+        { value: 'dark', label: 'Dark (navy/purple gradient)' },
+        { value: 'light', label: 'Light (pink)' },
+        { value: 'white', label: 'White' },
+      ], defaultValue: 'dark' },
       { id: 'month', label: 'Month', type: 'text', placeholder: 'April', defaultValue: 'April' },
       { id: 'year', label: 'Year', type: 'text', placeholder: '2025', defaultValue: '2025' },
       { id: 'title', label: 'Title Text', type: 'text', placeholder: '.NET Updates', defaultValue: '.NET Updates' },
+      { id: 'subtitle', label: 'Subtitle', type: 'text', placeholder: 'Out of Band Update', defaultValue: '' },
       { id: 'extraImages', label: 'Additional Images', type: 'imageList', defaultValue: [] },
     ],
   },

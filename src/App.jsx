@@ -388,6 +388,15 @@ function App() {
               <div style={{ margin: '16px 0 8px', fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>Dark</div>
               <div className="preview-container" dangerouslySetInnerHTML={{ __html: getSvg(templateId, { ...values, variant: 'dark' }, exportWidth, exportHeight) }} />
             </>
+          ) : templateId === 'sourcebuild-email' ? (
+            <>
+              <div style={{ marginBottom: '8px', fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>Dark</div>
+              <div className="preview-container" dangerouslySetInnerHTML={{ __html: getSvg(templateId, { ...values, variant: 'dark' }, exportWidth, exportHeight) }} />
+              <div style={{ margin: '16px 0 8px', fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>Light (Pink)</div>
+              <div className="preview-container" dangerouslySetInnerHTML={{ __html: getSvg(templateId, { ...values, variant: 'light' }, exportWidth, exportHeight) }} />
+              <div style={{ margin: '16px 0 8px', fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>White</div>
+              <div className="preview-container" dangerouslySetInnerHTML={{ __html: getSvg(templateId, { ...values, variant: 'white' }, exportWidth, exportHeight) }} />
+            </>
           ) : (
             <div className="preview-container" dangerouslySetInnerHTML={{ __html: svgString }} />
           )}
