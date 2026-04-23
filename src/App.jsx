@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react'
-import { TEMPLATES, getTemplate, getDefaultValues, getTemplateIds } from './templates'
+import { TEMPLATES, FONT_OPTIONS, getTemplate, getDefaultValues, getTemplateIds } from './templates'
 import { generateEmailHeaderSvg } from './generators/emailHeader'
 import { generateBlogPostSvg } from './generators/blogPost'
 
@@ -275,6 +275,39 @@ function App() {
             )}
             <small className="helper-text">Add logos, icons, or other images to the thumbnail</small>
           </div>
+        </div>
+      )
+    }
+
+    if (field.type === 'font') {
+      return (
+        <div key={field.id} className="control-group">
+          <label htmlFor={`field-${field.id}`}>{field.label}</label>
+          <select
+            id={`field-${field.id}`}
+            value={value || field.defaultValue}
+            onChange={(e) => handleFieldChange(field.id, e.target.value)}
+            style={{ fontFamily: value || field.defaultValue }}
+          >
+            {FONT_OPTIONS.map(opt => (
+              <option key={opt.label} value={opt.value} style={{ fontFamily: opt.value }}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+      )
+    }
+
+    if (field.type === 'toggle') {
+      return (
+        <div key={field.id} className="control-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
+          <label htmlFor={`field-${field.id}`} style={{ marginBottom: 0, cursor: 'pointer' }}>{field.label}</label>
+          <input
+            type="checkbox"
+            id={`field-${field.id}`}
+            checked={!!value}
+            onChange={(e) => handleFieldChange(field.id, e.target.checked)}
+            style={{ width: '18px', height: '18px', accentColor: 'var(--color-primary)' }}
+          />
         </div>
       )
     }

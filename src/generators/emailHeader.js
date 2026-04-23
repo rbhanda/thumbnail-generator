@@ -10,6 +10,9 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
     subtitle = '',
     variant = 'dark',
     extraImages = [],
+    fontFamily = "'Segoe UI', system-ui, sans-serif",
+    titleBold = false,
+    titleItalic = true,
   } = values
 
   // Sanitize image URLs to prevent script injection
@@ -28,6 +31,9 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
   const dateColor = isDark ? '#4d9fff' : '#0066ff'
   const titleColor = isDark ? '#ffffff' : '#512bd4'
   const subtitleColor = isDark ? '#8dc8e8' : '#0066ff'
+  const fontWeight = titleBold ? '700' : '300'
+  const fontStyle = titleItalic ? 'italic' : 'normal'
+  const safeFont = escapeXml(fontFamily)
 
   // .NET badge
   const badgeW = r(90)
@@ -41,7 +47,7 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
 
   // Subtitle (center-right area, only if provided)
   const subtitleSection = subtitle ? `
-  <text x="${width * 0.52}" y="${rh(420)}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${r(32)}" font-weight="400" font-style="italic" fill="${subtitleColor}">
+  <text x="${width * 0.52}" y="${rh(420)}" font-family="${safeFont}" font-size="${r(32)}" font-weight="400" font-style="${fontStyle}" fill="${subtitleColor}">
     ${escapeXml(subtitle)}
   </text>` : ''
 
@@ -70,12 +76,12 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
   <rect width="${width}" height="${height}" fill="${isDark ? 'url(#bg-grad)' : bgColor}" />
 
   <!-- Date text -->
-  <text x="${r(80)}" y="${rh(130)}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${r(40)}" font-weight="600" fill="${dateColor}">
+  <text x="${r(80)}" y="${rh(130)}" font-family="${safeFont}" font-size="${r(40)}" font-weight="600" fill="${dateColor}">
     ${escapeXml(dateText)}
   </text>
 
-  <!-- Title (italic) -->
-  <text x="${r(80)}" y="${rh(280)}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${r(110)}" font-weight="300" font-style="italic" fill="${titleColor}" letter-spacing="-1">
+  <!-- Title -->
+  <text x="${r(80)}" y="${rh(280)}" font-family="${safeFont}" font-size="${r(110)}" font-weight="${fontWeight}" font-style="${fontStyle}" fill="${titleColor}" letter-spacing="-1">
     ${escapeXml(title)}
   </text>
 

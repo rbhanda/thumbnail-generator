@@ -1,5 +1,17 @@
 // Template definitions for .NET image generator
 
+export const FONT_OPTIONS = [
+  { value: "'Segoe UI', system-ui, sans-serif", label: 'Segoe UI' },
+  { value: "'Arial', Helvetica, sans-serif", label: 'Arial' },
+  { value: "'Helvetica Neue', Helvetica, sans-serif", label: 'Helvetica Neue' },
+  { value: "'Georgia', serif", label: 'Georgia' },
+  { value: "'Times New Roman', Times, serif", label: 'Times New Roman' },
+  { value: "'Verdana', Geneva, sans-serif", label: 'Verdana' },
+  { value: "'Trebuchet MS', sans-serif", label: 'Trebuchet MS' },
+  { value: "'Calibri', sans-serif", label: 'Calibri' },
+  { value: "'Consolas', monospace", label: 'Consolas' },
+]
+
 export const TEMPLATES = {
   'blog-post': {
     id: 'blog-post',
@@ -11,6 +23,9 @@ export const TEMPLATES = {
       { id: 'pill', label: 'Pill / Badge', type: 'text', placeholder: 'April 2026', defaultValue: 'April 2026' },
       { id: 'title', label: 'Title', type: 'text', placeholder: '.NET 10.0.7 Update', defaultValue: '.NET 10.0.7 Update' },
       { id: 'subtitle', label: 'Subtitle', type: 'text', placeholder: 'Out of Band Security Update', defaultValue: 'Out of Band Security Update' },
+      { id: 'fontFamily', label: 'Font', type: 'font', defaultValue: "'Segoe UI', system-ui, sans-serif" },
+      { id: 'titleBold', label: 'Title Bold', type: 'toggle', defaultValue: true },
+      { id: 'titleItalic', label: 'Title Italic', type: 'toggle', defaultValue: false },
       { id: 'variant', label: 'Style', type: 'select', options: [
         { value: 'light', label: 'Light (pink/white)' },
         { value: 'dark', label: 'Dark (purple gradient)' },
@@ -37,6 +52,9 @@ export const TEMPLATES = {
       { id: 'year', label: 'Year', type: 'text', placeholder: '2025', defaultValue: '2025' },
       { id: 'title', label: 'Title Text', type: 'text', placeholder: '.NET Updates', defaultValue: '.NET Updates' },
       { id: 'subtitle', label: 'Subtitle', type: 'text', placeholder: 'Out of Band Update', defaultValue: '' },
+      { id: 'fontFamily', label: 'Font', type: 'font', defaultValue: "'Segoe UI', system-ui, sans-serif" },
+      { id: 'titleBold', label: 'Title Bold', type: 'toggle', defaultValue: false },
+      { id: 'titleItalic', label: 'Title Italic', type: 'toggle', defaultValue: true },
       { id: 'extraImages', label: 'Additional Images', type: 'imageList', defaultValue: [] },
     ],
   },

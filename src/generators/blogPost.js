@@ -12,6 +12,9 @@ export function generateBlogPostSvg(values, width = 1920, height = 1080) {
     gradientEnd = '#fce4ec',
     logoImage = null,
     extraImages = [],
+    fontFamily = "'Segoe UI', system-ui, sans-serif",
+    titleBold = true,
+    titleItalic = false,
   } = values
 
   // Sanitize image URLs to prevent script injection
@@ -27,6 +30,10 @@ export function generateBlogPostSvg(values, width = 1920, height = 1080) {
   const pillText = isLight ? '#ffffff' : '#000000'
   const bgStart = isLight ? gradientStart : (gradientStart === '#f5e6f0' ? '#2d1b69' : gradientStart)
   const bgEnd = isLight ? gradientEnd : (gradientEnd === '#fce4ec' ? '#512bd4' : gradientEnd)
+
+  const fontWeight = titleBold ? '800' : '400'
+  const fontStyle = titleItalic ? 'italic' : 'normal'
+  const safeFont = escapeXml(fontFamily)
 
   // Pill badge
   const pillSize = Math.round(56 * scale)
@@ -50,7 +57,7 @@ export function generateBlogPostSvg(values, width = 1920, height = 1080) {
   const titleLines = wrapText(title, maxCharsPerLine)
   const titleStartY = pill ? pillY + pillHeight + Math.round(40 * scale) + titleSize : Math.round(160 * scale) + titleSize
   const titleSection = titleLines.map((line, i) =>
-    `<text x="${edgeX}" y="${titleStartY + i * titleLineHeight}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${titleSize}" font-weight="800" fill="${textColor}" letter-spacing="-2">${escapeXml(line)}</text>`
+    `<text x="${edgeX}" y="${titleStartY + i * titleLineHeight}" font-family="${safeFont}" font-size="${titleSize}" font-weight="${fontWeight}" font-style="${fontStyle}" fill="${textColor}" letter-spacing="-2">${escapeXml(line)}</text>`
   ).join('\n  ')
 
   // Subtitle at bottom-left
@@ -59,7 +66,7 @@ export function generateBlogPostSvg(values, width = 1920, height = 1080) {
   const subtitleMaxChars = Math.floor(textMaxWidth / (subtitleSize * 0.5))
   const subtitleLines = wrapText(subtitle, subtitleMaxChars)
   const subtitleSection = subtitle ? subtitleLines.map((line, i) =>
-    `<text x="${edgeX}" y="${subtitleY + i * (subtitleSize * 1.2)}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${subtitleSize}" font-weight="600" fill="${textColor}" opacity="0.8">${escapeXml(line)}</text>`
+    `<text x="${edgeX}" y="${subtitleY + i * (subtitleSize * 1.2)}" font-family="${safeFont}" font-size="${subtitleSize}" font-weight="600" fill="${textColor}" opacity="0.8">${escapeXml(line)}</text>`
   ).join('\n  ') : ''
 
   // Logo in white circle on right side
