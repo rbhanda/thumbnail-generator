@@ -381,7 +381,16 @@ function App() {
         </section>
 
         <section className="preview-section">
-          <div className="preview-container" dangerouslySetInnerHTML={{ __html: svgString }} />
+          {templateId === 'blog-post' ? (
+            <>
+              <div style={{ marginBottom: '8px', fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>Light</div>
+              <div className="preview-container" dangerouslySetInnerHTML={{ __html: getSvg(templateId, { ...values, variant: 'light' }, exportWidth, exportHeight) }} />
+              <div style={{ margin: '16px 0 8px', fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>Dark</div>
+              <div className="preview-container" dangerouslySetInnerHTML={{ __html: getSvg(templateId, { ...values, variant: 'dark' }, exportWidth, exportHeight) }} />
+            </>
+          ) : (
+            <div className="preview-container" dangerouslySetInnerHTML={{ __html: svgString }} />
+          )}
         </section>
       </main>
 

@@ -45,7 +45,7 @@ export function generateBlogPostSvg(values, width = 1920, height = 1080) {
   const textMaxWidth = hasLogos ? width * 0.52 : width - edgeX * 2
   const maxCharsPerLine = Math.floor(textMaxWidth / (titleSize * 0.52))
   const titleLines = wrapText(title, maxCharsPerLine)
-  const titleStartY = pillY + pillHeight + Math.round(80 * scale)
+  const titleStartY = pill ? pillY + pillHeight + Math.round(40 * scale) + titleSize : Math.round(160 * scale) + titleSize
   const titleSection = titleLines.map((line, i) =>
     `<text x="${edgeX}" y="${titleStartY + i * titleLineHeight}" font-family="'Segoe UI', system-ui, sans-serif" font-size="${titleSize}" font-weight="800" fill="${textColor}" letter-spacing="-2">${escapeXml(line)}</text>`
   ).join('\n  ')
