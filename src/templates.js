@@ -55,6 +55,7 @@ export const TEMPLATES = {
       { id: 'fontFamily', label: 'Font', type: 'font', defaultValue: "'Segoe UI', system-ui, sans-serif" },
       { id: 'titleBold', label: 'Title Bold', type: 'toggle', defaultValue: false },
       { id: 'titleItalic', label: 'Title Italic', type: 'toggle', defaultValue: true },
+      { id: 'logoImage', label: 'Logo Image', type: 'image', defaultValue: 'dotnet-bot.png' },
       { id: 'extraImages', label: 'Additional Images', type: 'imageList', defaultValue: [] },
     ],
   },

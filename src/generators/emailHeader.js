@@ -9,6 +9,7 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
     title = '.NET Updates',
     subtitle = '',
     variant = 'dark',
+    logoImage = null,
     extraImages = [],
     fontFamily = "'Segoe UI', system-ui, sans-serif",
     titleBold = false,
@@ -35,15 +36,18 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
   const fontStyle = titleItalic ? 'italic' : 'normal'
   const safeFont = escapeXml(fontFamily)
 
-  // .NET badge
-  const badgeW = r(90)
-  const badgeH = r(52)
-  const badgeX = width - r(380)
-  const badgeY = height - rh(160)
-  const badgeSection = `
-    <rect x="${badgeX}" y="${badgeY}" width="${badgeW}" height="${badgeH}" rx="${r(8)}" fill="#512bd4" />
-    <text x="${badgeX + badgeW / 2}" y="${badgeY + badgeH / 2 + r(6)}" font-family="'Segoe UI', sans-serif" font-size="${r(18)}" font-weight="700" fill="#ffffff" text-anchor="middle">.NET</text>
-  `
+  // Logo image in a circle near the tilted square
+  const safeLogoHref = logoImage ? safeHref(logoImage) : ''
+  const logoCx = width - r(140)
+  const logoCy = rh(350)
+  const logoR = r(55)
+  const logoClipR = logoR * 0.88
+  const logoImgSize = logoClipR * Math.SQRT2 * 0.95
+  const logoSection = safeLogoHref ? `
+    <clipPath id="email-logo-clip"><circle cx="${logoCx}" cy="${logoCy}" r="${logoClipR}" /></clipPath>
+    <circle cx="${logoCx}" cy="${logoCy}" r="${logoR}" fill="white" opacity="0.15" />
+    <image href="${safeLogoHref}" x="${logoCx - logoImgSize / 2}" y="${logoCy - logoImgSize / 2}" width="${logoImgSize}" height="${logoImgSize}" clip-path="url(#email-logo-clip)" preserveAspectRatio="xMidYMid meet" />
+  ` : ''
 
   // Subtitle (center-right area, only if provided)
   const subtitleSection = subtitle ? `
@@ -107,8 +111,8 @@ export function generateEmailHeaderSvg(values, width = 1920, height = 640) {
   <!-- Tilted purple square (outlined) -->
   <rect x="${width - r(200)}" y="${rh(290)}" width="${r(120)}" height="${r(120)}" rx="${r(10)}" fill="none" stroke="#7c4dff" stroke-width="${r(6)}" opacity="0.55" transform="rotate(15, ${width - r(140)}, ${rh(350)})" />
 
-  <!-- .NET badge -->
-  ${badgeSection}
+  <!-- Logo -->
+  ${logoSection}
 
   <!-- Large magenta sphere bottom-right -->
   <circle cx="${width - r(250)}" cy="${height - rh(90)}" r="${r(65)}" fill="url(#magenta-sphere)" opacity="0.9" />
