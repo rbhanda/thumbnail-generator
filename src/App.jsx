@@ -101,7 +101,29 @@ function App() {
       canvas.height = exportHeight
       const ctx = canvas.getContext('2d')
 
-      const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' })
+      // Inline all <image href="..."> references as base64 data URIs so they
+      // render when the SVG is loaded as a blob URL in an <img> element.
+      let inlinedSvg = svgString
+      const hrefRe = /<image\b[^>]*\bhref="([^"]+)"/g
+      const hrefMatches = [...svgString.matchAll(hrefRe)]
+      for (const match of hrefMatches) {
+        const href = match[1]
+        if (href.startsWith('data:')) continue
+        try {
+          const resp = await fetch(href)
+          const blob = await resp.blob()
+          const dataUri = await new Promise((res) => {
+            const reader = new FileReader()
+            reader.onloadend = () => res(reader.result)
+            reader.readAsDataURL(blob)
+          })
+          inlinedSvg = inlinedSvg.replaceAll(href, dataUri)
+        } catch {
+          // If fetch fails, leave the original href (logo will be missing)
+        }
+      }
+
+      const svgBlob = new Blob([inlinedSvg], { type: 'image/svg+xml;charset=utf-8' })
       const url = URL.createObjectURL(svgBlob)
       const img = new Image()
 
